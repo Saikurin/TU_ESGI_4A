@@ -26,6 +26,7 @@ RUN set -eux; \
 		$PHPIZE_DEPS \
 		icu-dev \
 		libzip-dev \
+		postgresql-dev \
 		zlib-dev \
     freetype-dev \
     libjpeg-turbo-dev \
