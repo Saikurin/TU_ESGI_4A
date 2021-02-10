@@ -51,7 +51,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\GreaterThanOrEqual()
+     * @Assert\GreaterThanOrEqual(13)
      */
     private $age;
 
