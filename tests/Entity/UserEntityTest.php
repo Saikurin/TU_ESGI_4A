@@ -75,4 +75,17 @@ class UserEntityTest extends TestCase
         $user = new User('sikli.theo@gmail.com', 'theo', 'sikli', 30);
         $this->assertTrue($user->checkAge());
     }
+
+    public function testAddToDoListOnSuccess()
+    {
+        $user = new User('sikli.theo@gmail.com', 'theo', 'sikli', 30);
+        $this->assertTrue($user->addToDoList());
+    }
+
+    public function testAddToDoListOnFail()
+    {
+        $user = new User('sikli.theo@gmail.com', 'theo', 'sikli', 30);
+        $user->addToDoList();
+        $this->assertFalse($user->addToDoList());
+    }
 }

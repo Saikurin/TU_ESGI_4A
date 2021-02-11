@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -56,6 +58,11 @@ class User implements UserInterface
     private $age;
 
     /**
+     * @ORM\OneToMany(targetEntity=ToDoList::class, mappedBy="creator", orphanRemoval=true)
+     */
+    private $todolist;
+
+    /**
      * User constructor.
      * @param string $email
      * @param string $firstname
@@ -68,6 +75,7 @@ class User implements UserInterface
         $this->firstname = $firstname;
         $this->lastname = $lastname;
         $this->age = $age;
+        $this->todolist = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -228,6 +236,36 @@ class User implements UserInterface
     public function checkAge(): bool
     {
         return isset($this->age) && is_int($this->age) && $this->age >= 13;
+    }
+
+    /**
+     * @return Collection|ToDoList[]
+     */
+    public function getTodolist(): Collection
+    {
+        return $this->todolist;
+    }
+
+    public function removeTodolist(ToDoList $todolist): self
+    {
+        if ($this->todolist->removeElement($todolist)) {
+            // set the owning side to null (unless already changed)
+            if ($todolist->getCreator() === $this) {
+                $todolist->setCreator(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function addToDoList(): bool
+    {
+        if (isset($this->toDoList)) return false;
+        $this->toDoList = new ToDoList($this);
+        return true;
     }
 
 }
