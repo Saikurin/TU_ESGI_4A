@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\ToDoListRepository;
+use DateTime;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -34,9 +37,15 @@ class ToDoList
      */
     private User $creator;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Item::class, mappedBy="todolist", orphanRemoval=true)
+     */
+    private $items;
+
     public function __construct(User $user)
     {
         $this->creator = $user;
+        $this->items = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -78,5 +87,91 @@ class ToDoList
         $this->creator = $creator;
 
         return $this;
+    }
+
+    /**
+     * @return Collection|Item[]
+     */
+    public function getItems(): Collection
+    {
+        return $this->items;
+    }
+
+    /**
+     * @param Item $item
+     * @return $this
+     */
+    public function addItem(Item $item): self
+    {
+        if (!$this->items->contains($item)) {
+            $this->items[] = $item;
+            $item->setTodolist($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Item $item
+     * @return $this
+     */
+    public function removeItem(Item $item): self
+    {
+        if ($this->items->removeElement($item)) {
+            // set the owning side to null (unless already changed)
+            if ($item->getTodolist() === $this) {
+                $item->setTodolist(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Item $item
+     * @return $this|null
+     */
+    public function canAddItem(Item $item): ?ToDoList
+    {
+        if ($this->isUnique($item) && $this->checkMaxSize() && $this->checkWaitingTime()){
+            // Send mail
+            return $this->addItem($item);
+        }
+        return null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function checkWaitingTime(): bool
+    {
+        if (!isset($this->lastCreationItem)) return true;
+
+        $now = new DateTime('NOW');
+        $interval = $now->getTimestamp() - $this->lastCreationItem->getTimestamp();
+        $waitingTime = 30 * 60;
+        return $interval >= $waitingTime;
+    }
+
+    /**
+     * @param Item $newItem
+     * @return bool
+     */
+    public function isUnique(Item $newItem): bool
+    {
+        foreach ($this->items as $item){
+            if ($item->getName() == $newItem->getName()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function checkMaxSize(): bool
+    {
+        return (count($this->items) >= 0) && (count($this->items) <= 10);
     }
 }
