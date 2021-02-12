@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ToDoList index{% endblock %}
+
+{% block body %}
+    <h2>Bonjour {{ app.user.firstname }}</h2>
+    <p>Voici vos listes en cours</p>
+    <div class="mb-4">
+        <a class="btn btn-lg btn-info " href="{{ path('to_do_list_new') }}">Nouvelle liste</a>
+    </div>
+
+{#    <div class="page-content page-container" id="page-content">#}
+{#        <div class="padding">#}
+            <div class="row container d-flex justify-content-center">
+                {% for to_do_list in to_do_lists %}
+                <div class="col-lg-6">
+                    <div class="card px-3">
+                        <div class="card-body">
+                            <div class="row d-flex justify-content-between">
+                                <h4 class="card-title text-info font-weight-bold">{{ to_do_list.name }}</h4>
+                                <form method="post" action="{{ path('to_do_list_delete', {'id': to_do_list.id}) }}">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ to_do_list.id) }}">
+                                    <button class="btn"><i class="fas fa-trash-alt text-danger"></i></button>
+                                </form>
+                            </div>
+                            <div class="add-items d-flex">
+                                <input type="text" class="form-control" id="todo-list-input{{to_do_list.id}}"> <button class="add btn btn-info font-weight-bold todo-list-add-btn" onclick="addItem({{to_do_list.id}});">Add</button>
+                            </div>
+                            <div class="list-wrapper">
+                                <ul class="d-flex flex-column-reverse todo-list">
+                                    {% for item in to_do_list.items %}
+                                    <li class="d-flex justify-content-between">
+                                        <p> {{item.content}} </p>
+                                        <form method="post" action="{{ path('item_delete', {'id': item.id}) }}">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ item.id) }}">
+                                            <button class="btn"><i class="remove mdi mdi-close-circle-outline"></i></button>
+                                        </form>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                    <p>Vous n'avez pas encore de liste</p>
+                {% endfor %}
+            </div>
+{#        </div>#}
+{#    </div>#}
+
+{% endblock %}
+{% block javascripts %}
+    <script>
+        function addItem(toDoListId) {
+            let input = document.getElementById("todo-list-input"+toDoListId);
+            $.ajax({
+                url : '/item/new',
+                type : 'POST', // Le type de la requête HTTP, ici devenu POST
+                data : {content: input.value,
+                    toDoList: toDoListId}
+            });
+        }
+    </script>
+{% endblock %}
