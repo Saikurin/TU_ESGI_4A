@@ -18,7 +18,11 @@ class ToDoListTest extends TestCase
         parent::__construct($name, $data, $dataName);
         $this->emailServiceMock = $this->createMock(EmailService::class);
         $this->emailServiceMock->method('send')->willReturn(true);
+<<<<<<< HEAD
         $this->user = new UserOld('nashtheo@gmail.com', 'nashtheo', 'hedoosikli', 30);
+=======
+        $this->user = new UserOld('dehaut.alix@gmail.com', 'alix', 'de Haut', 30);
+>>>>>>> 10f18147a8b765ec386570635ec0842709851989
     }
 
     private function todoList()
