@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}Se connecter{% endblock %}
 
 {% block body %}
     <div class="row">
-        <div class="col-6">
+        <div class="col-12">
             <form method="post">
                 {% if error %}
                     <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
@@ -32,11 +32,6 @@
             </form>
         </div>
 
-        <div class="col-6 my-auto">
-            <h1 class="h3 mb-3 font-weight-normal">Inscription</h1>
-            <p>Pas encore de compte ?</p>
-            <a class="btn btn-lg btn-primary" href="{{ path('user_new') }}">S'inscrire </a>
-        </div>
 
     </div>
 
