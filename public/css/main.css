@@ -361,7 +361,7 @@ input[type="checkbox"] {
     width: 18px;
     height: 18px;
     border-radius: 2px;
-    border: solid #405189;
+    border: solid yellow;
     border-width: 2px;
     -webkit-transition: all;
     -moz-transition: all;
@@ -384,7 +384,7 @@ input[type="checkbox"] {
 
 .text-primary,
 .list-wrapper .completed .remove {
-    color: #405189 !important
+    color:red !important
 }
 
 .list-wrapper .remove {
